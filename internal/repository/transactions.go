@@ -1,29 +1,10 @@
-package data
+package repository
 
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"time"
 )
-
-type Transaction struct {
-	ID          int64     `json:"id"`
-	UserId      int64     `json:"user_id"`
-	MerchantId  int64     `json:"merchant_id"`
-	Amount      int       `json:"amount"`
-	Description string    `json:"description"`
-	Date        time.Time `json:"date"`
-}
-
-type TransactionModel struct {
-	DB *sql.DB
-}
-
-type ITransaction interface {
-	Insert(transaction *Transaction)
-	Get(id int64)
-}
 
 func (m TransactionModel) Insert(transaction *Transaction) error {
 	query := `

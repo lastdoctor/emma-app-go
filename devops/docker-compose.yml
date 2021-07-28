@@ -13,3 +13,18 @@ services:
       - ./postgres-db:/var/lib/postgresql/data/pgdata
     ports:
       - 5432:5432
+
+#  emma_api:
+#    image: emma-api-app
+#    build:
+#      context: .
+#      dockerfile: ../Dockerfile
+#    ports:
+#      - 4000
+#    depends_on:
+#      - postgres
+#    volumes:
+#      - ./.bin/:root/
+#      - ./configs/:root/configs/
+#    env_file:
+#      - .env

@@ -1,29 +1,18 @@
-package data
+package repository
 
 import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/lastdoctor/emma-app-go/internal/domain"
 	"time"
 )
-
-type Merchant struct {
-	ID          int64  `json:"id"`
-	DisplayName string `json:"display_name"`
-	IconUrl     string `json:"icon_url"`
-	FunnyGifUrl string `json:"funny_gif_url"`
-}
 
 type MerchantModel struct {
 	DB *sql.DB
 }
 
-type IMerchant interface {
-	Insert(merchant *Merchant)
-	Get(id int64)
-}
-
-func (m MerchantModel) Insert(merchant *Merchant) error {
+func (m MerchantModel) Create(merchant *domain.Merchants) error {
 	query := `
 INSERT INTO merchant (display_name, icon_url, funny_gif_url)
 VALUES($1, $2)
@@ -39,12 +28,12 @@ RETURNING id`
 	return nil
 }
 
-func (m MerchantModel) Get(id int64) (*Merchant, error) {
+func (m MerchantModel) GetById(id int64) (*domain.Merchants, error) {
 	if id < 1 {
-		return nil, ErrRecordNotFound
+		//return nil, ErrRecordNotFound
 	}
 	query := `SELECT * FROM merchant where id = $1`
-	var merchant Merchant
+	var merchant domain.Merchants
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	err := m.DB.QueryRowContext(ctx, query, id).Scan(&merchant.ID, &merchant.DisplayName, &merchant.FunnyGifUrl,
@@ -52,7 +41,7 @@ func (m MerchantModel) Get(id int64) (*Merchant, error) {
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return nil, ErrRecordNotFound
+			//return nil, ErrRecordNotFound
 		default:
 			return nil, err
 		}

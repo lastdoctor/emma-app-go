@@ -1,5 +1,8 @@
 package main
 
+import "github.com/lastdoctor/emma-app-go/internal/app"
+
 func main() {
-	app.Run()
+	const configsDir = "configs"
+	app.Run(configsDir)
 }

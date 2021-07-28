@@ -1,27 +1,11 @@
-package data
+package repository
 
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"log"
 	"time"
 )
-
-type User struct {
-	ID        int64  `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-}
-
-type UserModel struct {
-	DB *sql.DB
-}
-
-type IUser interface {
-	Insert(user *User) error
-	Get(id int64) (*User, error)
-}
 
 func (m UserModel) Insert(user *User) error {
 	query := `
