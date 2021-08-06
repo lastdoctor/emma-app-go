@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (app *application) getUserHandler(w http.ResponseWriter, r *http.Request) {
+func (app *main.application) getUserHandler(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParam(r)
 	if err != nil {
 		app.notFoundResponse(w, r, err)
@@ -29,7 +29,7 @@ func (app *application) getUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *application) postUserHandler(w http.ResponseWriter, r *http.Request) {
+func (app *main.application) postUserHandler(w http.ResponseWriter, r *http.Request) {
 	var user data.User
 	err := app.readJSON(w, r, &user)
 	if err != nil {

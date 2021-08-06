@@ -1,33 +1,37 @@
 package main
 
 import (
-	//"context"
-	//"github.com/lastdoctor/emma-app-go/internal/app"
-	//"github.com/lastdoctor/emma-app-go/internal/http"
-	//"github.com/lastdoctor/emma-app-go/internal/pkg/database/postgres"
-	//"github.com/lastdoctor/emma-app-go/internal/repository"
-	//"log"
-	//"os"
-	//"os/signal"
-	//"syscall"
-	//"time"
+	"github.com/lastdoctor/emma-app-go/internal/http"
+	"github.com/lastdoctor/emma-app-go/internal/pkg/logger"
 	"go.uber.org/zap"
-	"log"
 )
 
 func main() {
-	// Init logger
-	logger, err := zap.NewDevelopment()
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	cfg, err := Init(configsDir)
-	if err != nil {
-		logger.Error("Configuration is not initialize", zap.Error(err))
-		return
-	}
+	// Init Logger
+	zap.ReplaceGlobals(logger.InitLog())
 
+	// Init HTTP
+	go func() {
+		_, err := http.NewServer()
+		if err != nil {
+			zap.L().Error("fa")
+			return
+		}
+	}()
+	//pgCfg, err2 := InitRepositories()
+	//if err2 != nil {
+	//	return
+	//}
+	//log.Println(*pgCfg)
+
+	//Init Configuration
+	//const path = "./"
+	//cfg, err := ConfigInit(path)
+	//if err != nil {
+	//	zap.L().Error("Init configuration is failed")
+	//	return
+	//}
+	//print(cfg)
 	//
 	//db, err := postgres.NewClient(cfg)
 	//if err != nil {

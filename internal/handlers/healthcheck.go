@@ -1,8 +1,10 @@
-package main
+package handlers
 
-import "net/http"
+import (
+	"net/http"
+)
 
-func (app *application) healthcheckHander(w http.ResponseWriter, r *http.Request) {
+func (app *main.application) healthcheckHander(w http.ResponseWriter, r *http.Request) {
 	envo := envelope{
 		"isOK": true,
 	}

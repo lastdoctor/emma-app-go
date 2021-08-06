@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ import (
 
 type envelope map[string]interface{}
 
-func (app *application) readIDParam(r *http.Request) (int64, error) {
+func (app *main.application) readIDParam(r *http.Request) (int64, error) {
 	params := httprouter.ParamsFromContext(r.Context())
 	id, err := strconv.ParseInt(params.ByName("id"), 10, 64)
 	if err != nil || id < 1 {
@@ -23,7 +23,7 @@ func (app *application) readIDParam(r *http.Request) (int64, error) {
 	return id, nil
 }
 
-func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers http.Header) error {
+func (app *main.application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers http.Header) error {
 	js, err := json.Marshal(data)
 	if err != nil {
 		return err
@@ -40,7 +40,7 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data interf
 	return nil
 }
 
-func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst interface{}) error {
+func (app *main.application) readJSON(w http.ResponseWriter, r *http.Request, dst interface{}) error {
 	maxbytes := 1_048_576
 	r.Body = http.MaxBytesReader(w, r.Body, int64(maxbytes))
 	dec := json.NewDecoder(r.Body)
