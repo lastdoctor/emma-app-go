@@ -15,7 +15,7 @@ services:
       - 5432:5432
 
 #  emma_api:
-#    image: emma-api-app
+#    image: emma-handlers-app
 #    build:
 #      context: .
 #      dockerfile: ../Dockerfile

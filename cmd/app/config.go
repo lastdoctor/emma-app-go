@@ -1,4 +1,4 @@
-package config
+package main
 
 import (
 	"flag"
@@ -43,44 +43,23 @@ func Init(configsDir string) (*Config, error) {
 	var cfg = populateDefaults()
 	return cfg, nil
 
-	//if err := parseConfigFile(configsDir, os.Getenv("APP_ENV")); err != nil {
+	// if err := parseConfigFile(configsDir, os.Getenv("APP_ENV")); err != nil {
 	//	return nil, err
-	//}
+	// }
 	//
-	//var cfg Config
-	//if err := unmarshal(&cfg); err != nil {
+	// var cfg Config
+	// if err := unmarshal(&cfg); err != nil {
 	//	return nil, err
-	//}
+	// }
 
-	//setFromEnv(&cfg)
+	// setFromEnv(&cfg)
 }
-
-//func unmarshal(cfg *Config) error {
-//	if err := viper.UnmarshalKey("http", &cfg.HTTP); err != nil {
-//		return err
-//	}
-//
-//	if err := viper.UnmarshalKey("limiter", &cfg.Limiter); err != nil {
-//		return err
-//	}
-//
-//	return nil
-//}
-
-//func setFromEnv(cfg *Config) {
-//	cfg.Postgres.HOST = os.Getenv("POSTGRES_URI")
-//	cfg.Postgres.User = os.Getenv("POSTGRES_USER")
-//	cfg.Postgres.Password = os.Getenv("POSTGRES_PASSWORD")
-//	cfg.Postgres.Database = os.Getenv("POSTGRES_DB")
-//
-//	cfg.HTTP.Host = os.Getenv("HTTP_HOST")
-//}
 
 func populateDefaults() *Config {
 	var cfg Config
 	flag.StringVar(&cfg.HTTP.Port, "port", "4000", "API server port")
 	flag.StringVar(&cfg.Environment, "environment", "development", "Environment (development|staging|production)")
-	//flag.StringVar(&cfg.db.dsn, "db-dsn", "host=localhost port=5432 user=postgres dbname=postgres password=root sslmode=disable", "Postgres DSN")
+	// flag.StringVar(&cfg.db.dsn, "db-dsn", "host=localhost port=5432 user=postgres dbname=postgres password=root sslmode=disable", "Postgres DSN")
 	flag.StringVar(&cfg.Postgres.HOST, "db-host", "localhost", "PostgreSQL host")
 	flag.StringVar(&cfg.Postgres.Database, "db-database", "postgres", "PostgreSQL database")
 	flag.StringVar(&cfg.Postgres.User, "db-user", "postgres", "PostgreSQL user")
@@ -109,3 +88,24 @@ func populateDefaults() *Config {
 	viper.SetDefault("limiter.ttl", cfg.Limiter.TTL)
 	return &cfg
 }
+
+//func unmarshal(cfg *Config) error {
+//	if err := viper.UnmarshalKey("http", &cfg.HTTP); err != nil {
+//		return err
+//	}
+//
+//	if err := viper.UnmarshalKey("limiter", &cfg.Limiter); err != nil {
+//		return err
+//	}
+//
+//	return nil
+//}
+
+//func setFromEnv(cfg *Config) {
+//	cfg.Postgres.HOST = os.Getenv("POSTGRES_URI")
+//	cfg.Postgres.User = os.Getenv("POSTGRES_USER")
+//	cfg.Postgres.Password = os.Getenv("POSTGRES_PASSWORD")
+//	cfg.Postgres.Database = os.Getenv("POSTGRES_DB")
+//
+//	cfg.HTTP.Host = os.Getenv("HTTP_HOST")
+//}

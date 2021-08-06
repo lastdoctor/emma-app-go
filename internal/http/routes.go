@@ -2,7 +2,7 @@ package http
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"github.com/lastdoctor/emma-app-go/internal/config"
+	"github.com/lastdoctor/emma-app-go/cmd/app"
 	"net/http"
 )
 
@@ -16,10 +16,10 @@ func NewRoutes(services *service.Services) *Routes {
 	}
 }
 
-func (h *Routes) Init(cfg *config.Config) *httprouter.Router {
+func (h *Routes) Init(cfg *main.Config) *httprouter.Router {
 	router := httprouter.New()
-	//router.NotFound =
-	//router.MethodNotAllowed =
+	// router.NotFound =
+	// router.MethodNotAllowed =
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHander)
 	router.HandlerFunc(http.MethodGet, "/v1/users/:id", app.getUserHandler)

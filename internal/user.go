@@ -1,4 +1,4 @@
-package repository
+package internal
 
 import (
 	"context"
@@ -6,6 +6,12 @@ import (
 	"log"
 	"time"
 )
+
+type User struct {
+	ID        int64  `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+}
 
 func (m UserModel) Insert(user *User) error {
 	query := `
