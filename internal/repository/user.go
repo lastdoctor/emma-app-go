@@ -1,52 +1,48 @@
 package repository
 
 import (
-	"context"
-	"database/sql"
-	"log"
+	"github.com/google/uuid"
 	"time"
 )
 
+// User is a JSON user
 type User struct {
-	ID        int64  `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	ID        uuid.UUID `json:"id"`
+	Firstname string    `json:"firstname" validate:"required"`
+	Lastname  string    `json:"lastname" validate:"required"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
-func (m UserModel) Insert(user *User) error {
-	query := `
-INSERT INTO users (first_name, last_name)
-VALUES ($1, $2)
-RETURNING id`
-	args := []interface{}{user.FirstName, user.LastName}
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.ID)
-	if err != nil {
-		return err
-	}
-	return nil
+// DBUser is a Postgres user
+type DBUser struct {
+	tableName struct{}  `pg:"users" gorm:"primaryKey"`
+	ID        uuid.UUID `pg:"id,notnull,pk"`
+	Firstname string    `pg:"firstname,notnull"`
+	Lastname  string    `pg:"lastname,notnull"`
+	CreatedAt time.Time `pg:"created_at,notnull"`
 }
 
-func (m UserModel) Get(id int64) (*User, error) {
-	if id < 1 {
-		return nil, ErrRecordNotFound
+// ToDB converts User to DBUser
+func (user *User) ToDB() *DBUser {
+	return &DBUser{
+		ID:        user.ID,
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+		CreatedAt: user.CreatedAt,
 	}
-	query := `SELECT * FROM users WHERE id = $1`
-	var user User
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-	log.Println(id)
-	err := m.DB.QueryRowContext(ctx, query, id).Scan(&user.ID, &user.FirstName, &user.LastName)
-	if err != nil {
-		switch {
-		case errors.Is(err, sql.ErrNoRows):
-			return nil, ErrRecordNotFound
-		default:
-			return nil, err
-		}
-	}
+}
 
-	return &user, nil
+// TableName overrides default table name for gorm
+func (DBUser) TableName() string {
+	return "users"
+}
+
+// ToWeb converts DBUser to User
+func (dbUser *DBUser) ToWeb() *User {
+	return &User{
+		ID:        dbUser.ID,
+		Firstname: dbUser.Firstname,
+		Lastname:  dbUser.Lastname,
+		CreatedAt: dbUser.CreatedAt,
+	}
 }

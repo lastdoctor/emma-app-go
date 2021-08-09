@@ -1,60 +1,52 @@
 package repository
 
 import (
-	"context"
-	"database/sql"
-	"errors"
-	"fmt"
+	"github.com/google/uuid"
 	"time"
 )
 
+// Merchant is a JSON merchant
 type Merchant struct {
-	ID          int64  `json:"id"`
-	DisplayName string `json:"display_name"`
-	IconUrl     string `json:"icon_url"`
-	FunnyGifUrl string `json:"funny_gif_url"`
+	ID          uuid.UUID `json:"id"`
+	DisplayName string    `json:"displayName" validate:"required"`
+	IconUrl     string    `json:"iconUrl" validate:"required"`
+	FunnyGifUrl string    `json:"funnyGifUrl" validate:"required"`
+	CreatedAt   time.Time `json:"createdAt"`
 }
 
-type MerchantStorage interface {
-	Create(displayName string, iconUrl string, funnyGifUrl string) (*Merchant, error)
+// DBMerchant is a Postgres merchant
+type DBMerchant struct {
+	tableName   struct{}  `pg:"merchants" gorm:"primaryKey"`
+	ID          uuid.UUID `pg:"id,notnull,pk"`
+	DisplayName string    `pg:"display_name"`
+	IconUrl     string    `pg:"icon_url"`
+	FunnyGifUrl string    `pg:"funny_gif_url"`
+	CreatedAt   time.Time `pg:"created_at,notnull"`
 }
 
-type Merchants interface {
-	Create(merchant *Merchant) (*Merchant, error)
-	GetById(id int64) (*Merchant, error)
-}
-
-type MerchantRepository struct {
-	DB      *sql.DB
-	Storage MerchantStorage
-}
-
-func (m MerchantRepository) Create(merchant *Merchant) (*Merchant, error) {
-	createdMerchant, err := m.Storage.Create(merchant.DisplayName, merchant.IconUrl, merchant.FunnyGifUrl)
-	if err != nil {
-		return nil, fmt.Errorf("can't create merchant in storage: %w", err)
+// ToDB converts Merchent to DBMerchant
+func (merchant *Merchant) ToDB() *DBMerchant {
+	return &DBMerchant{
+		ID:          merchant.ID,
+		DisplayName: merchant.DisplayName,
+		IconUrl:     merchant.IconUrl,
+		FunnyGifUrl: merchant.FunnyGifUrl,
+		CreatedAt:   merchant.CreatedAt,
 	}
-
-	return createdMerchant, nil
 }
 
-func (m MerchantRepository) GetById(id int64) (*Merchant, error) {
-	if id < 1 {
-		// return nil, ErrRecordNotFound
+// TableName overrides default table name for gorm
+func (DBMerchant) TableName() string {
+	return "merchants"
+}
+
+// ToWeb converts DBUser to User
+func (dbMerchant *Merchant) ToWeb() *Merchant {
+	return &Merchant{
+		ID:          dbMerchant.ID,
+		DisplayName: dbMerchant.DisplayName,
+		IconUrl:     dbMerchant.IconUrl,
+		FunnyGifUrl: dbMerchant.FunnyGifUrl,
+		CreatedAt:   dbMerchant.CreatedAt,
 	}
-	query := `SELECT * FROM merchant where id = $1`
-	var merchant Merchant
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-	err := m.DB.QueryRowContext(ctx, query, id).Scan(&merchant.ID, &merchant.DisplayName, &merchant.FunnyGifUrl,
-		&merchant.FunnyGifUrl)
-	if err != nil {
-		switch {
-		case errors.Is(err, sql.ErrNoRows):
-			// return nil, ErrRecordNotFound
-		default:
-			return nil, err
-		}
-	}
-	return &merchant, nil
 }

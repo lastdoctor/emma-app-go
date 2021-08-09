@@ -1,79 +1,51 @@
 package repository
 
 import (
-	"github.com/spf13/viper"
-	"go.uber.org/zap"
+	"context"
+	"github.com/google/uuid"
+	"github.com/lastdoctor/emma-app-go/internal/repository/pg"
 )
 
-//import (
-//	"database/sql"
-//	"errors"
-//	"github.com/lastdoctor/emma-app-go/internal/domain"
-//)
-type PostgresConfig struct {
-	HOST      string `mapstructure:"PG_HOST"`
-	User      string `mapstructure:"PG_USER"`
-	Password  string `mapstructure:"PG_PASSWORD"`
-	Database  string `mapstructure:"PG_DATABASE"`
-	Port      int    `mapstructure:"PG_PORT"`
-	OpenConns int    `mapstructure:"PG_CONNS"`
-	IdleConns int    `mapstructure:"PG_IDLE"`
+type Store struct {
+	Pg *pg.DB
 }
 
-func pgConfig() (*PostgresConfig, error) {
-	var pgCfg PostgresConfig
-	const path = "."
-	viper.AddConfigPath(path)
-	viper.SetConfigName("development")
-	viper.SetConfigType("env")
-	viper.AutomaticEnv()
+//func New(ctx context.Context) (*Store, error) {
+//	// Connect to Postgres
+//	pgDB, err := pg.Dial()
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	// Run Postgres migrations
+//	if  {
+//
+//	}
+//}
 
-	err := viper.ReadInConfig()
-	if err != nil {
-		zap.L().Error("reading .env is failed", zap.Error(err))
-		return nil, err
-	}
-
-	err = viper.Unmarshal(&pgCfg)
-	return &pgCfg, nil
+// UserRepo is repository for users
+//go:generate mockery --dir . --name UserRepo --output ./mocks
+type UserRepo interface {
+	GetUser(context.Context, uuid.UUID) (*DBUser, error)
+	CreateUser(context.Context, *DBUser) (*DBUser, error)
+	UpdateUser(context.Context, *DBUser) (*DBUser, error)
+	DeleteUser(context.Context, uuid.UUID) error
 }
 
-//var (
-//	ErrRecordNotFound = errors.New("record not found")
-//)
-//
-//type Users interface {
-//	Create(user *Users) error
-//	GetById(id int64) (*domain.User, error)
-//}
-//
-//type UsersRepos struct {
-//	DB *sql.DB
-//}
-//
-//type Merchants interface {
-//	Create(merchant *domain.Merchants) error
-//	GetById(id int64) (*domain.Merchants, error)
-//}
-//
-//type MerchantsRepos struct {
-//	DB *sql.DB
-//}
-//
-//type Transactions interface {
-//	Create()
-//}
-//
-//type Repositories struct {
-//	Users        Users
-//	Merchants    Merchants
-//	Transactions Transactions
-//}
-//
-//func InitRepositories(db *sql.DB) *Repositories {
-//return &Repositories{
-//	Users:        UsersRepos{DB: db},
-//	Merchants:    MerchantsRepos{DB: db},
-//	Transactions: nil,
-//}
-//}
+// MerchantRepo is repository for merchants
+//go:generate mockery --dir . --name MerchantRepo --output ./mocks
+type MerchantRepo interface {
+	GetMerchant(context.Context, uuid.UUID) (*Merchant, error)
+	CreateMerchant(context.Context, *Merchant) (*Merchant, error)
+	UpdateMerchant(context.Context, *Merchant) (*Merchant, error)
+	DeleteMerchant(context.Context, uuid.UUID) error
+}
+
+// TransactionRepo is repository for transactions
+//go:generate mockery --dir . --name FileContentRepo --output ./mocks
+type TransactionRepo interface {
+	GetTransaction(context.Context, uuid.UUID) (*Transaction, error)
+	CreateTransaction(context.Context, uuid.UUID) (*Transaction, error)
+	UpdateTransaction(context.Context, uuid.UUID) (*Transaction, error)
+	DeleteMerchant(context.Context, uuid.UUID) error
+}
