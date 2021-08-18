@@ -1,9 +1,18 @@
-package repository
+package pg
 
 import (
 	"github.com/google/uuid"
 	"time"
 )
+
+// UserRepo is store for users
+//go:generate mockery --dir . --name UserRepo --output ./mocks
+type UserRepo interface {
+	GetUser(context.Context, uuid.UUID) (*pg.DBUser, error)
+	CreateUser(context.Context, *pg.DBUser) (*pg.DBUser, error)
+	UpdateUser(context.Context, *pg.DBUser) (*pg.DBUser, error)
+	DeleteUser(context.Context, uuid.UUID) error
+}
 
 // User is a JSON user
 type User struct {

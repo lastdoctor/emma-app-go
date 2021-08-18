@@ -1,9 +1,18 @@
-package repository
+package pg
 
 import (
 	"github.com/google/uuid"
 	"time"
 )
+
+// MerchantRepo is store for merchants
+//go:generate mockery --dir . --name MerchantRepo --output ./mocks
+type MerchantRepo interface {
+	GetMerchant(context.Context, uuid.UUID) (*pg.Merchant, error)
+	CreateMerchant(context.Context, *pg.Merchant) (*pg.Merchant, error)
+	UpdateMerchant(context.Context, *pg.Merchant) (*pg.Merchant, error)
+	DeleteMerchant(context.Context, uuid.UUID) error
+}
 
 // Merchant is a JSON merchant
 type Merchant struct {
