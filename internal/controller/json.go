@@ -1,11 +1,11 @@
-package http
+package controller
 
 import (
 	"encoding/json"
 	"net/http"
 )
 
-func writeJSON(w http.ResponseWriter, statusCode int, data interface{}, headers http.Header) error {
+func WriteJSON(w http.ResponseWriter, statusCode int, data interface{}, headers http.Header) error {
 	for key, value := range headers {
 		w.Header()[key] = value
 	}

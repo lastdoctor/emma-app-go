@@ -25,12 +25,12 @@ type HTTPConfig struct {
 
 func Serve(cfg HTTPConfig) error {
 	srv := http.Server{
-		Addr:           fmt.Sprintf("%s:%d", cfg.HOST, cfg.PORT),
-		Handler:        routes(),
-		MaxHeaderBytes: 1 << 20,
-		IdleTimeout:    time.Duration(cfg.IdleTimeout),
-		ReadTimeout:    time.Duration(cfg.ReadTimeout),
-		WriteTimeout:   time.Duration(cfg.WriteTimeout),
+		Addr:    fmt.Sprintf("%s:%d", cfg.HOST, cfg.PORT),
+		Handler: routes(),
+		//MaxHeaderBytes: 1 << 20,
+		//IdleTimeout:    time.Duration(cfg.IdleTimeout),
+		//ReadTimeout:    time.Duration(cfg.ReadTimeout),
+		//WriteTimeout:   time.Duration(cfg.WriteTimeout),
 	}
 
 	// Create a shutdown channel to receive any errors

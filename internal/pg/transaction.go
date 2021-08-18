@@ -1,9 +1,18 @@
-package repository
+package pg
 
 import (
 	"github.com/google/uuid"
 	"time"
 )
+
+// TransactionRepo is store for transactions
+//go:generate mockery --dir . --name FileContentRepo --output ./mocks
+type TransactionRepo interface {
+	GetTransaction(context.Context, uuid.UUID) (*pg.Transaction, error)
+	CreateTransaction(context.Context, uuid.UUID) (*pg.Transaction, error)
+	UpdateTransaction(context.Context, uuid.UUID) (*pg.Transaction, error)
+	DeleteMerchant(context.Context, uuid.UUID) error
+}
 
 // Transaction is a JSON transaction
 type Transaction struct {

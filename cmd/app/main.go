@@ -1,19 +1,23 @@
 package main
 
 import (
+	"context"
 	"github.com/lastdoctor/emma-app-go/internal/http"
 	"github.com/lastdoctor/emma-app-go/internal/logger"
+	"github.com/lastdoctor/emma-app-go/internal/pg"
 	"go.uber.org/zap"
+	"log"
 )
 
 func main() {
 	if err := run(); err != nil {
-		logger.Logger().Fatal("Cannot start EmmaApp", zap.Error(err))
+		logger.Logger().Fatal("Cannot start Emma App", zap.Error(err))
 	}
 }
 
 func run() error {
-	//ctx := context.contextBackground()
+	// Create context
+	ctx := context.Background()
 
 	// Initialize configuration
 	cfg, err := GetConfig()
@@ -21,6 +25,25 @@ func run() error {
 		logger.Logger().Error("Failed to get configuration", zap.Error(err))
 		return err
 	}
+
+	// Initialize postgres and repository
+	pgCfd := pg.PostgresConfig{
+		PgHost:    cfg.PgHost,
+		User:      cfg.User,
+		Password:  cfg.Password,
+		Database:  cfg.Database,
+		PgPort:    cfg.PgPort,
+		OpenConns: cfg.OpenConns,
+		IdleConns: cfg.IdleConns,
+	}
+	pgDB, err := pg.New(ctx, pgCfd)
+	if err != nil {
+		logger.Logger().Error("Failed to initialize the store", zap.Error(err))
+		return err
+	}
+	log.Println(pgDB)
+	// TODO `Initialize and implement service`
+
 	// Starting API server
 	httpCfg := http.HTTPConfig{
 		PORT:         cfg.PORT,
@@ -37,18 +60,5 @@ func run() error {
 		logger.Logger().Error("Failed to start HTTP server", zap.Error(err))
 		return err
 	}
-
-	//Init repository repository
-	//repository, err := repository.New(ctx)
-	//if err != nil {
-	//	logger.Logger().Error(err)
-	//}
-
-	//dial, err := pg.Dial()
-	//if err != nil {
-	//	logger.Logger().Error("Failed to connect to database", zap.Error(err))
-	//	return err
-	//}
-	//logger.Logger().Info(dial.String())
 	return nil
 }
